@@ -1,0 +1,13 @@
+{
+  "name": "rmrk-emote-script",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/martinloesethjensen/rmrk-emote-script.git",
+  "author": "Martin L. Jensen <martinloesethjensen@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@polkadot/api": "^4.9.2",
+    "@polkadot/keyring": "^6.4.1",
+    "yargs": "^17.0.1"
+  }
+}
