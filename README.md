@@ -1,5 +1,15 @@
 # rmrk-emote-script
 
+## Getting started
+
+Clone repo and install npm packages.
+
+```sh
+git clone https://github.com/martinloesethjensen/rmrk-emote-batch
+cd rmrk-emote-batch
+npm install
+```
+
 ## How to run
 
 Specify rpc endpoint, egg id and seed phrase in the command. 
