@@ -1,8 +1,8 @@
 {
-  "name": "rmrk-emote-script",
+  "name": "rmrk-emote-batch",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "https://github.com/martinloesethjensen/rmrk-emote-script.git",
+  "repository": "https://github.com/martinloesethjensen/rmrk-emote-batch.git",
   "author": "Martin L. Jensen <martinloesethjensen@gmail.com>",
   "license": "MIT",
   "dependencies": {
