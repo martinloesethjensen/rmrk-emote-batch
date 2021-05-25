@@ -20,6 +20,11 @@ const options = require('yargs')
     description: 'Your mnemonic seed. It is not saved anywhere.',
     required: true,
   })
+  .option('emotes', {
+    type: 'array',
+    description: 'array of emojis, space separated',
+    required: false,
+  })
   .argv
 
 async function main() {
@@ -33,6 +38,7 @@ async function main() {
 
   const ID = options.id
   const PHRASE = options.seed;
+  const emotes = options.emotes;
 
   let account = keyring.addFromUri(PHRASE);
 
@@ -41,13 +47,26 @@ async function main() {
 
   let rmrks = [];
 
-  emojis.forEach((emoji) => { rmrks.push(api.tx.system.remark(`RMRK::EMOTE::1.0.0::${ID}::${emoji}`)); });
+  if (typeof emotes !== 'undefined') {
+    let emojisMapped = emotes.map((e) => e.toString());
+    emojisMapped.forEach((emoji) => {
+      let utf8 = emoji.codePointAt(0)?.toString(16);
+      if (utf8) {
+        console.log(`[emoji]: ${emoji} / ${utf8}`)
+        rmrks.push(api.tx.system.remark(`RMRK::EMOTE::1.0.0::${ID}::${utf8}`));
+      } else {
+        throw Error("Failed to create utf8 of emoji.")
+      }
+    });
+  } else {
+    emojis.forEach((emoji) => { 
+      rmrks.push(api.tx.system.remark(`RMRK::EMOTE::1.0.0::${ID}::${emoji}`)); 
+    });
+  }
 
   let rmrksChunked = chunkArray(rmrks, 10);
 
   for (chunk of rmrksChunked) {
-    console.log(chunk.length);
-
     const tx = api.tx.utility.batch(chunk);
     await sendAndFinalize(tx, account);
   }
@@ -99,56 +118,7 @@ async function sendAndFinalize(tx, account) {
 }
 
 const emojis = [
-  '1f327-fe0f',
-  '1f328-fe0f',
-  '1f329-fe0f',
-  '1f32a-fe0f',
-  '1f32b-fe0f',
-  '1f32c-fe0f',
-  '1f300',
-  '1f308',
-  '1f302',
-  '2602-fe0f',
-  '2614',
-  '26f1-fe0f',
-  '26a1',
-  '2744-fe0f',
-  '2603-fe0f',
-  '26c4',
-  '2604-fe0f',
-  '1f525',
-  '1f4a7',
-  '1f30a',
-  '1f453',
-  '1f576-fe0f',
-  '1f97d',
-  '1f97c',
-  '1f9ba',
-  '1f454',
-  '1f455',
-  '1f456',
-  '1f9e3',
-  '1f9e4',
-  '1f9e5',
-  '1f9e6',
-  '1f457',
-  '1f458',
-  '1f97b',
-  '1fa71',
-  '1fa72',
-  '1fa73',
-  '1f459',
-  '1f45a',
-  '1f45b',
-  '1f45c',
-  '1f45d',
-  '1f6cd-fe0f',
-  '1f392',
-  '1f45e',
-  '1f45f',
-  '1f97e',
-  '1f97f',
-  '1f460'
+  // Input emoji unicodes here
 ];
 
 main().catch(console.error).finally(() => process.exit());
