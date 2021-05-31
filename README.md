@@ -32,4 +32,20 @@ node index.js --id "6802595-24d573f4dfa1d7fd33-KAN-KANL-000000000000<EGG_ID>" -e
 
 Please note that the [`emojis` list in index.js](index.js) contains many emoji unicodes. So if you want to emote with less emojis then just remove some from the list before running it.
 
-You can find [emoji unicodes here](https://unicode.org/emoji/charts/full-emoji-list.html).
+You can find [emoji unicodes here](https://unicode.org/emoji/charts/full-emoji-list.html) and [here](./emoji-unicodes.txt).
+
+## Commands
+
+```txt
+Options:
+      --help      Show help                                            [boolean]
+      --version   Show version number                                  [boolean]
+      --id        The id of your target egg                  [string] [required]
+  -e, --endpoint  The wss endpoint. [Westend = wss://westend-rpc.polkadot.io]
+                  [Kusama = wss://kusama-rpc.polkadot.io]    [string] [required]
+  -s, --seed      Your mnemonic seed. It is not saved anywhere.
+                                                             [string] [required]
+      --emotes    array of emojis, space separated                       [array]
+  -r, --remove    array of emojis to remove from the list, space separated
+                                                                         [array]
+```
