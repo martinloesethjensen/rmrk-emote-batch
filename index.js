@@ -93,16 +93,6 @@ async function main() {
       rmrks.push(api.tx.system.remark(`RMRK::EMOTE::1.0.0::${ID}::${emoji}`));
     });
   }
-
-  /*
-  let rmrksChunked = chunkArray(rmrks, 10);
-  
-  for (chunk of rmrksChunked) {
-    const tx = api.tx.utility.batch(chunk);
-    await sendAndFinalize(tx, account);
-  }
-  */
-
   
   const tx = api.tx.utility.batch(rmrks);
 
@@ -111,44 +101,6 @@ async function main() {
 
   console.log('Transaction sent with hash', hash.toHex());
   
-}
-
-function chunkArray(array, size) {
-  let result = []
-  for (let i = 0; i < array.length; i += size) {
-    let chunk = array.slice(i, i + size)
-    result.push(chunk)
-  }
-  return result
-}
-
-// Lovely function from [kanaria-hatcher index.ts](https://github.com/kianenigma/kanaria-hatchery/blob/30e98bd1f39336d1c11e877cf874c452a2aa3756/src/index.ts#L167)
-async function sendAndFinalize(tx, account) {
-  return new Promise(async resolve => {
-    let success = false;
-    let included = []
-    let finalized = []
-    let unsubscribe = await tx.signAndSend(account, ({ events = [], status, dispatchError }) => {
-      if (status.isInBlock) {
-        success = dispatchError ? false : true;
-        console.log(`📀 Transaction ${tx.meta.name}(${tx.args.toString()}) included at blockHash ${status.asInBlock} [success = ${success}]`);
-        included = [...events]
-      } else if (status.isBroadcast) {
-        console.log(`🚀 Transaction broadcasted.`);
-      } else if (status.isFinalized) {
-        status.is
-        console.log(`💯 Transaction ${tx.meta.name}(..) Finalized at blockHash ${status.asFinalized}`);
-        finalized = [...events]
-        let hash = status.hash;
-        unsubscribe();
-        resolve({ success, hash, included, finalized })
-      } else if (status.isReady) {
-        // let's not be too noisy..
-      } else {
-        console.log(`🤷 Other status ${status}`)
-      }
-    })
-  })
 }
 
 const emojis = [
