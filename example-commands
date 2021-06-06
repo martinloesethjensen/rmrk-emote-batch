@@ -1,0 +1,8 @@
+# Sending specific emotee
+node index.js --id <RMRK_ID> -e wss://kusama-rpc.polkadot.io -s "<SEED_PHRASE>" --emotes
+
+# Removing specific emotes from complete list of emotes
+node index.js --id <RMRK_ID> -e wss://kusama-rpc.polkadot.io -s "<SEED_PHRASE>" -r 
+
+# Sending all emotes
+node index.js --id <RMRK_ID> -e wss://kusama-rpc.polkadot.io -s "<SEED_PHRASE>"
