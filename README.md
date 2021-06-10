@@ -4,7 +4,7 @@ If you are looking for a script to create multiple addresses and emote specific 
 
 This script is heavily inspired by the above mentioned script, so please have a look a that script as well and give it a :star:.
 
-They way this script differs is that it sends 1700+ emojis in one batch call to be executed on the node.
+They way this script differs is that it sends 1700+ emojis in **one batch call** to be executed on the node.
 
 ## Getting started
 
