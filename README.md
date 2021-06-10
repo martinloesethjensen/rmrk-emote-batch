@@ -6,6 +6,8 @@ This script is heavily inspired by the above mentioned script, so please have a 
 
 The way this script differs is that it sends 1700+ emojis in **one batch call** to be executed on the node.
 
+⚠️ **_PLEASE BE AWARE THAT RUNNING THE SCRIPT WITH ALL 1700+ EMOTES WILL BE ROUGHLY ~0.05 KSM_**
+
 ## Getting started
 
 First have [polkadot js api installed](https://polkadot.js.org/docs/api/start/install).
