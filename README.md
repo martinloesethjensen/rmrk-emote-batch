@@ -8,6 +8,8 @@ They way this script differs is that it sends 1700+ emojis in one batch call to 
 
 ## Getting started
 
+First have [polkadot js api installed](https://polkadot.js.org/docs/api/start/install).
+
 Clone repo and install npm packages.
 
 ```sh
