@@ -6,7 +6,9 @@ This script is heavily inspired by the above mentioned script, so please have a 
 
 The way this script differs is that it sends 1700+ emojis in **one batch call** to be executed on the node.
 
-⚠️  **_PLEASE BE AWARE THAT RUNNING THE SCRIPT WITH ALL 1700+ EMOTES WILL BE ROUGHLY ~0.05 KSM_**
+⚠️ **_PLEASE BE AWARE THAT RUNNING THE SCRIPT WITH ALL 1700+ EMOTES WILL BE ROUGHLY ~0.05 KSM_**
+
+⚠️ **_PLEASE BE DON'T RUN THIS ON A HATCHING EGG_**
 
 An example of the [extrinsic after running the script will look like this](https://kusama.subscan.io/extrinsic/0x77e1baf6e368644c60b6b3ffade989ff4298b76259e8e8a2edd29e6c7bed914f)  
 
@@ -35,7 +37,7 @@ I would first test on Westend before trying it out on kusama. But try in small b
 [Westend faucet info here.](https://wiki.polkadot.network/docs/en/maintain-networks#westend-faucet)
 
 ```sh
-# Sending all emotes
+# Sending all emotes (roughly ~0.05 KSM)
 node index.js --id <RMRK_ID> -e wss://kusama-rpc.polkadot.io -s "<SEED_PHRASE>"
 
 # Sending specific emotee
