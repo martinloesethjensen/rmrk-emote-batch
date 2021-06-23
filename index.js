@@ -111,9 +111,9 @@ async function main() {
       console.log(`Chunk size: ${chunk.length}`);
 
       const tx = api.tx.utility.batch(chunk);
-      //await sendAndFinalize(tx, account);
+      await sendAndFinalize(tx, account);
     }
-    
+
   });
   
   //const tx = api.tx.utility.batch(rmrks);
