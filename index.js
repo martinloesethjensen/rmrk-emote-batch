@@ -110,8 +110,8 @@ async function main() {
     for (chunk of rmrksChunked) {
       console.log(`Chunk size: ${chunk.length}`);
 
-      //const tx = api.tx.utility.batch(chunk);
-      //await sendAndFinalize(tx, account);
+      const tx = api.tx.utility.batch(chunk);
+      await sendAndFinalize(tx, account);
     }
 
   }
