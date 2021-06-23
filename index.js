@@ -48,7 +48,7 @@ async function main() {
   const emotes = options.emotes;
   const removeEmotes = options.remove;
 
-  keys.forEach((key) => {
+  for (key of keys) {
 
     let account = keyring.addFromUri(key);
 
@@ -114,7 +114,7 @@ async function main() {
       await sendAndFinalize(tx, account);
     }
 
-  });
+  }
   
   //const tx = api.tx.utility.batch(rmrks);
 
@@ -123,6 +123,12 @@ async function main() {
 
   //console.log('Transaction sent with hash', hash.toHex());
   
+}
+
+async function asyncForEach(array, callback) {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array);
+  }
 }
 
 function chunkArray(array, size) {
