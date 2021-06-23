@@ -43,8 +43,8 @@ async function main() {
 
   const keyring = new Keyring({ type: 'sr25519', ss58Format: api.registry.chainSS58 });
 
-  const rmrk_ids = fs.readFileSync(`${options.id}`, 'UTF-8').split(/\r?\n/);
-  const keys = fs.readFileSync(`${options.seed}`, 'UTF-8').split(/\r?\n/);
+  const rmrk_ids = fs.readFileSync(`${options.id}`, 'UTF-8').split(/\r?\n/).filter(entry => entry.trim() != '');
+  const keys = fs.readFileSync(`${options.seed}`, 'UTF-8').split(/\r?\n/).filter(entry => entry.trim() != '');
   const emotes = options.emotes;
   const removeEmotes = options.remove;
 
@@ -110,8 +110,8 @@ async function main() {
     for (chunk of rmrksChunked) {
       console.log(`Chunk size: ${chunk.length}`);
 
-      const tx = api.tx.utility.batch(chunk);
-      await sendAndFinalize(tx, account);
+      //const tx = api.tx.utility.batch(chunk);
+      //await sendAndFinalize(tx, account);
     }
 
   }
