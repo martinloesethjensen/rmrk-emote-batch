@@ -8,7 +8,7 @@ The way this script differs is that it sends 1700+ emojis in **one batch call** 
 
 ⚠️ **_PLEASE BE AWARE THAT RUNNING THE SCRIPT WITH ALL 1700+ EMOTES WILL BE ROUGHLY ~0.05 KSM_**
 
-⚠️ **_PLEASE BE DON'T RUN THIS ON A HATCHING EGG_**
+⚠️ **_PLEASE DON'T RUN THIS ON A HATCHING EGG_**
 
 An example of the [extrinsic after running the script will look like this](https://kusama.subscan.io/extrinsic/0x77e1baf6e368644c60b6b3ffade989ff4298b76259e8e8a2edd29e6c7bed914f)  
 
@@ -56,6 +56,13 @@ node index.js --id <RMRK_ID_FILE> -e wss://kusama-rpc.polkadot.io -s <SEED_FILE>
 ℹ️ Please note that the [`emojis` list in index.js](index.js) contains many emoji unicodes. So if you want to emote with less emojis then just remove some from the list before running it. It is also possible to specify a specific list of emojis by using the command: `--emotes` and providing a space sperated list of emotjis.
 
 You can find [emoji unicodes here](https://unicode.org/emoji/charts/full-emoji-list.html) and [here](./emoji-unicodes.txt).
+
+### Funding Accounts Example
+
+```sh
+# Fund other accounts by sending an amount from a funder to receiving addresses
+node index.js -e wss://kusama-rpc.polkadot.io --receiving-addresses <FILE_WITH_ADDRESSES> --funding-account <FILE_WITH_SEED> --amount <AMOUNT>
+```
 
 ## Commands
 
