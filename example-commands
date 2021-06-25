@@ -7,3 +7,6 @@ node index.js --id <RMRK_ID> -e wss://kusama-rpc.polkadot.io -s "<SEED_PHRASE>" 
 
 # Sending all emotes
 node index.js --id <RMRK_ID> -e wss://kusama-rpc.polkadot.io -s "<SEED_PHRASE>"
+
+# Funding addresses
+node index.js -e wss://westend-rpc.polkadot.io --receiving-addresses .addresses.txt --funding-account .funding-account --amount 4

@@ -6,20 +6,37 @@ const fs = require('fs');
 const options = require('yargs')
   .option('id', {
     type: 'string',
-    description: 'The id of your target egg',
-    required: true,
+    description: 'A file with RMRK IDs.',
+    required: false,
   })
   .option('endpoint', {
     alias: 'e',
     type: 'string',
-    description: 'The wss endpoint. [Westend = wss://westend-rpc.polkadot.io] [Kusama = wss://kusama-rpc.polkadot.io]',
+    description: 'The wss endpoint. (defaults to westend) [Westend = wss://westend-rpc.polkadot.io] [Kusama = wss://kusama-rpc.polkadot.io]',
     required: true,
   })
-  .option('seed', {
+  .option('secret-keys', {
     alias: 's',
     type: 'string',
-    description: 'Your mnemonic seed. It is not saved anywhere.',
-    required: true,
+    description: 'A file with secret keys or seed phrases. It is not saved anywhere.',
+    required: false,
+  })
+  .option('funding-account', {
+    alias: 'f',
+    type: 'string',
+    description: 'A file with secret key or seed phrase. It is not saved anywhere.',
+    required: false,
+  })
+  .option('receiving-addresses', {
+    alias: 'ra',
+    type: 'string',
+    description: 'Used with funding-account where we specify amount to transfer to receiving accounts in the accounts file.',
+    required: false,
+  })
+  .option('amount', {
+    type: 'num',
+    description: 'Used with funding-account where we specify amount to transfer to receiving accounts in the accounts file.',
+    required: false,
   })
   .option('emotes', {
     type: 'array',
@@ -43,92 +60,126 @@ async function main() {
 
   const keyring = new Keyring({ type: 'sr25519', ss58Format: api.registry.chainSS58 });
 
-  const rmrk_ids = fs.readFileSync(`${options.id}`, 'UTF-8').split(/\r?\n/).filter(entry => entry.trim() != '');
-  const keys = fs.readFileSync(`${options.seed}`, 'UTF-8').split(/\r?\n/).filter(entry => entry.trim() != '');
+  const rmrkIds = (typeof options.id !== 'undefined') 
+      ? fs.readFileSync(`${options.id}`, 'UTF-8').split(/\r?\n/).filter(entry => entry.trim() != '')
+      : undefined;
+  const keys = (typeof options['secret-keys'] !== 'undefined') 
+      ? fs.readFileSync(`${options['secret-keys']}`, 'UTF-8').split(/\r?\n/).filter(entry => entry.trim() != '')
+      : undefined;
+  const fundingAccount = (typeof options['funding-account'] !== 'undefined') 
+      ? fs.readFileSync(`${options['funding-account']}`, 'UTF-8').split(/\r?\n/).filter(entry => entry.trim() != '')
+      : undefined;
+  const receivingAddresses = (typeof options['receiving-addresses'] !== 'undefined') 
+      ? fs.readFileSync(`${options['receiving-addresses']}`, 'UTF-8').split(/\r?\n/).filter(entry => entry.trim() != '')
+      : undefined;
+  const amount = options.amount;
   const emotes = options.emotes;
   const removeEmotes = options.remove;
 
-  for (key of keys) {
+  if (typeof fundingAccount !== 'undefined' && 
+      typeof receivingAddresses !== 'undefined' && 
+      typeof amount !== 'undefined') {
+    let account = keyring.addFromUri(fundingAccount[0]);
+    console.log('🤖 ACCOUNT_ADDRESS: ', account.address);
 
-    let account = keyring.addFromUri(key);
+    let fundings = [];
 
-    console.log('🤖 ACCOUNT_ADDRESS: ', account.address)
+    /// KSM Precision [kusama guide](https://guide.kusama.network/docs/kusama-parameters/#precision)
+    const ksmPrecision = 1_000_000_000_000;
 
-    let rmrks = [];
+    const avg_amount = (amount * ksmPrecision) / receivingAddresses.length;
 
-    rmrk_ids.forEach((id) => {
+    console.log('💰 AVG_AMOUNT: ', avg_amount);
 
-      console.log(`🐤 RMRK_ID: ${id}`);
+    for (receiver of receivingAddresses) {
+      fundings.push(api.tx.balances.transfer(receiver, avg_amount));
+      console.log(`💸 Should send ${avg_amount} to ${receiver}`);
+    }
 
-      if (typeof emotes !== 'undefined') {
-        let emojisMapped = emotes.map((e) => e.toString());
-        emojisMapped.forEach((emoji) => {
-          let utf8 = emoji.codePointAt(0)?.toString(16);
-          if (utf8) {
-            console.log(`[emoji]: ${emoji} / ${utf8}`)
-            rmrks.push(api.tx.system.remark(`RMRK::EMOTE::1.0.0::${id}::${utf8}`));
-          } else {
-            throw Error("Failed to create utf8 of emoji.")
-          }
-        });
-      } else {
-        let _emojis = [];
+    const tx = api.tx.utility.batch(fundings);
 
-        console.log(`Total emojis in list: ${emojis.length}`);
+    // Sign and send the transaction using account
+    const hash = await tx.signAndSend(account);
 
-        if (typeof removeEmotes !== 'undefined') {
-          let emojisMapped = removeEmotes.map((e) => e.toString());
-          let temp = [];
+    console.log('Transaction sent with hash', hash.toHex());
+
+  } else {
+    for (key of keys) {
+
+      let account = keyring.addFromUri(key);
+
+      console.log('🤖 ACCOUNT_ADDRESS: ', account.address)
+
+      let rmrks = [];
+
+      rmrkIds.forEach((id) => {
+
+        console.log(`🐤 RMRK_ID: ${id}`);
+
+        if (typeof emotes !== 'undefined') {
+          let emojisMapped = emotes.map((e) => e.toString());
           emojisMapped.forEach((emoji) => {
             let utf8 = emoji.codePointAt(0)?.toString(16);
             if (utf8) {
-              console.log(`[emoji to remove from list]: ${emoji} / ${utf8}`)
-              temp.push(utf8);
+              console.log(`[emoji]: ${emoji} / ${utf8}`)
+              rmrks.push(api.tx.system.remark(`RMRK::EMOTE::1.0.0::${id}::${utf8}`));
             } else {
               throw Error("Failed to create utf8 of emoji.")
             }
           });
-          _emojis = emojis.filter((e) => !temp.includes(e));
         } else {
-          _emojis = emojis;
-        }
-        
-        console.log(`Emojis count to be emoted: ${_emojis.length}`);
+          let _emojis = [];
 
-        _emojis.forEach((emoji) => {
-          rmrks.push(api.tx.system.remark(`RMRK::EMOTE::1.0.0::${id}::${emoji}`));
-        });
+          console.log(`Total emojis in list: ${emojis.length}`);
+
+          if (typeof removeEmotes !== 'undefined') {
+            let emojisMapped = removeEmotes.map((e) => e.toString());
+            let temp = [];
+            emojisMapped.forEach((emoji) => {
+              let utf8 = emoji.codePointAt(0)?.toString(16);
+              if (utf8) {
+                console.log(`[emoji to remove from list]: ${emoji} / ${utf8}`)
+                temp.push(utf8);
+              } else {
+                throw Error("Failed to create utf8 of emoji.")
+              }
+            });
+            _emojis = emojis.filter((e) => !temp.includes(e));
+          } else {
+            _emojis = emojis;
+          }
+          
+          console.log(`Emojis count to be emoted: ${_emojis.length}`);
+
+          _emojis.forEach((emoji) => {
+            rmrks.push(api.tx.system.remark(`RMRK::EMOTE::1.0.0::${id}::${emoji}`));
+          });
+        }
+
+      });
+
+      let rmrksChunked = chunkArray(rmrks, 100);
+
+      console.log(`Total rmrks: ${rmrks.length}`);
+      console.log(`Total rmrk chunks: ${rmrksChunked.length}`);
+
+      for (chunk of rmrksChunked) {
+        console.log(`Chunk size: ${chunk.length}`);
+
+        const tx = api.tx.utility.batch(chunk);
+        await sendAndFinalize(tx, account);
       }
 
-    });
-
-    let rmrksChunked = chunkArray(rmrks, 100);
-
-    console.log(`Total rmrks: ${rmrks.length}`);
-    console.log(`Total rmrk chunks: ${rmrksChunked.length}`);
-
-    for (chunk of rmrksChunked) {
-      console.log(`Chunk size: ${chunk.length}`);
-
-      const tx = api.tx.utility.batch(chunk);
-      await sendAndFinalize(tx, account);
     }
+    
+    //const tx = api.tx.utility.batch(rmrks);
 
+    // Sign and send the transaction using account
+    //const hash = await tx.signAndSend(account);
+
+    //console.log('Transaction sent with hash', hash.toHex());
   }
   
-  //const tx = api.tx.utility.batch(rmrks);
-
-  // Sign and send the transaction using account
-  //const hash = await tx.signAndSend(account);
-
-  //console.log('Transaction sent with hash', hash.toHex());
-  
-}
-
-async function asyncForEach(array, callback) {
-  for (let index = 0; index < array.length; index++) {
-    await callback(array[index], index, array);
-  }
 }
 
 function chunkArray(array, size) {
@@ -149,7 +200,7 @@ async function sendAndFinalize(tx, account) {
     let unsubscribe = await tx.signAndSend(account, ({ events = [], status, dispatchError }) => {
       if (status.isInBlock) {
         success = dispatchError ? false : true;
-        console.log(`📀 Transaction ${tx.meta.name}(${tx.args.toString()}) included at blockHash ${status.asInBlock} [success = ${success}]`);
+        console.log(`📀 Transaction ${tx.meta.name} included at blockHash ${status.asInBlock} [success = ${success}]`);
         included = [...events]
       } else if (status.isBroadcast) {
         console.log(`🚀 Transaction broadcasted.`);
