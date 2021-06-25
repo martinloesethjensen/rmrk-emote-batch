@@ -1,6 +1,7 @@
 // Import the API, Keyring and some utility functions
 const { ApiPromise, WsProvider } = require('@polkadot/api');
 const { Keyring } = require('@polkadot/keyring');
+const fs = require('fs');
 
 const options = require('yargs')
   .option('id', {
@@ -42,65 +43,130 @@ async function main() {
 
   const keyring = new Keyring({ type: 'sr25519', ss58Format: api.registry.chainSS58 });
 
-  const ID = options.id
-  const PHRASE = options.seed;
+  const rmrk_ids = fs.readFileSync(`${options.id}`, 'UTF-8').split(/\r?\n/).filter(entry => entry.trim() != '');
+  const keys = fs.readFileSync(`${options.seed}`, 'UTF-8').split(/\r?\n/).filter(entry => entry.trim() != '');
   const emotes = options.emotes;
-  const removeEmotes = options.remove
+  const removeEmotes = options.remove;
 
-  let account = keyring.addFromUri(PHRASE);
+  for (key of keys) {
 
-  console.log('EGG_ID:          ', ID);
-  console.log('ACCOUNT_ADDRESS: ', account.address)
+    let account = keyring.addFromUri(key);
 
-  let rmrks = [];
+    console.log('🤖 ACCOUNT_ADDRESS: ', account.address)
 
-  if (typeof emotes !== 'undefined') {
-    let emojisMapped = emotes.map((e) => e.toString());
-    emojisMapped.forEach((emoji) => {
-      let utf8 = emoji.codePointAt(0)?.toString(16);
-      if (utf8) {
-        console.log(`[emoji]: ${emoji} / ${utf8}`)
-        rmrks.push(api.tx.system.remark(`RMRK::EMOTE::1.0.0::${ID}::${utf8}`));
+    let rmrks = [];
+
+    rmrk_ids.forEach((id) => {
+
+      console.log(`🐤 RMRK_ID: ${id}`);
+
+      if (typeof emotes !== 'undefined') {
+        let emojisMapped = emotes.map((e) => e.toString());
+        emojisMapped.forEach((emoji) => {
+          let utf8 = emoji.codePointAt(0)?.toString(16);
+          if (utf8) {
+            console.log(`[emoji]: ${emoji} / ${utf8}`)
+            rmrks.push(api.tx.system.remark(`RMRK::EMOTE::1.0.0::${id}::${utf8}`));
+          } else {
+            throw Error("Failed to create utf8 of emoji.")
+          }
+        });
       } else {
-        throw Error("Failed to create utf8 of emoji.")
-      }
-    });
-  } else {
-    let _emojis = [];
+        let _emojis = [];
 
-    console.log(`Total emojis in list: ${emojis.length}`);
+        console.log(`Total emojis in list: ${emojis.length}`);
 
-    if (typeof removeEmotes !== 'undefined') {
-      let emojisMapped = removeEmotes.map((e) => e.toString());
-      let temp = [];
-      emojisMapped.forEach((emoji) => {
-        let utf8 = emoji.codePointAt(0)?.toString(16);
-        if (utf8) {
-          console.log(`[emoji to remove from list]: ${emoji} / ${utf8}`)
-          temp.push(utf8);
+        if (typeof removeEmotes !== 'undefined') {
+          let emojisMapped = removeEmotes.map((e) => e.toString());
+          let temp = [];
+          emojisMapped.forEach((emoji) => {
+            let utf8 = emoji.codePointAt(0)?.toString(16);
+            if (utf8) {
+              console.log(`[emoji to remove from list]: ${emoji} / ${utf8}`)
+              temp.push(utf8);
+            } else {
+              throw Error("Failed to create utf8 of emoji.")
+            }
+          });
+          _emojis = emojis.filter((e) => !temp.includes(e));
         } else {
-          throw Error("Failed to create utf8 of emoji.")
+          _emojis = emojis;
         }
-      });
-      _emojis = emojis.filter((e) => !temp.includes(e));
-    } else {
-      _emojis = emojis;
-    }
-    
-    console.log(`Emojis count to be emoted: ${_emojis.length}`);
+        
+        console.log(`Emojis count to be emoted: ${_emojis.length}`);
 
-    _emojis.forEach((emoji) => {
-      rmrks.push(api.tx.system.remark(`RMRK::EMOTE::1.0.0::${ID}::${emoji}`));
+        _emojis.forEach((emoji) => {
+          rmrks.push(api.tx.system.remark(`RMRK::EMOTE::1.0.0::${id}::${emoji}`));
+        });
+      }
+
     });
+
+    let rmrksChunked = chunkArray(rmrks, 100);
+
+    console.log(`Total rmrks: ${rmrks.length}`);
+    console.log(`Total rmrk chunks: ${rmrksChunked.length}`);
+
+    for (chunk of rmrksChunked) {
+      console.log(`Chunk size: ${chunk.length}`);
+
+      const tx = api.tx.utility.batch(chunk);
+      await sendAndFinalize(tx, account);
+    }
+
   }
   
-  const tx = api.tx.utility.batch(rmrks);
+  //const tx = api.tx.utility.batch(rmrks);
 
   // Sign and send the transaction using account
-  const hash = await tx.signAndSend(account);
+  //const hash = await tx.signAndSend(account);
 
-  console.log('Transaction sent with hash', hash.toHex());
+  //console.log('Transaction sent with hash', hash.toHex());
   
+}
+
+async function asyncForEach(array, callback) {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array);
+  }
+}
+
+function chunkArray(array, size) {
+  let result = []
+  for (let i = 0; i < array.length; i += size) {
+    let chunk = array.slice(i, i + size)
+    result.push(chunk)
+  }
+  return result
+}
+
+// Lovely function from [kanaria-hatcher index.ts](https://github.com/kianenigma/kanaria-hatchery/blob/30e98bd1f39336d1c11e877cf874c452a2aa3756/src/index.ts#L167)
+async function sendAndFinalize(tx, account) {
+  return new Promise(async resolve => {
+    let success = false;
+    let included = []
+    let finalized = []
+    let unsubscribe = await tx.signAndSend(account, ({ events = [], status, dispatchError }) => {
+      if (status.isInBlock) {
+        success = dispatchError ? false : true;
+        console.log(`📀 Transaction ${tx.meta.name}(${tx.args.toString()}) included at blockHash ${status.asInBlock} [success = ${success}]`);
+        included = [...events]
+      } else if (status.isBroadcast) {
+        console.log(`🚀 Transaction broadcasted.`);
+      } else if (status.isFinalized) {
+        status.is
+        console.log(`💯 Transaction ${tx.meta.name}(..) Finalized at blockHash ${status.asFinalized}`);
+        finalized = [...events]
+        let hash = status.hash;
+        unsubscribe();
+        resolve({ success, hash, included, finalized })
+      } else if (status.isReady) {
+        // let's not be too noisy..
+      } else {
+        console.log(`🤷 Other status ${status}`)
+      }
+    })
+  })
 }
 
 const emojis = [

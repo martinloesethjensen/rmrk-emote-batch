@@ -14,7 +14,7 @@ An example of the [extrinsic after running the script will look like this](https
 
 🌱 Please support me if you'd like 😊
 
-[KSM Address](https://kusama.subscan.io/account/HtSKUKWRPCxCtzsnNfdbN1NN5uVq4yMizb2FqeHSC3YoRTi): 
+[KSM Address](https://kusama.subscan.io/account/HtSKUKWRPCxCtzsnNfdbN1NN5uVq4yMizb2FqeHSC3YoRTi):
 
 ```text
 HtSKUKWRPCxCtzsnNfdbN1NN5uVq4yMizb2FqeHSC3YoRTi
@@ -36,21 +36,21 @@ npm install
 
 Specify rpc endpoint, egg id and seed phrase in the command.
 
-I would first test on Westend before trying it out on kusama. But try in small batches of emotes as you might not have enough westies.   
+I would first test on Westend before trying it out on kusama. But try in small batches of emotes as you might not have enough westies.
 
 [Westend faucet info here.](https://wiki.polkadot.network/docs/en/maintain-networks#westend-faucet)
 
 ```sh
 # Sending all emotes (roughly ~0.05 KSM)
-node index.js --id <RMRK_ID> -e wss://kusama-rpc.polkadot.io -s "<SEED_PHRASE>"
+node index.js --id <RMRK_ID_FILE> -e wss://kusama-rpc.polkadot.io -s <SEED_FILE>
 
 # Sending specific emotee
 # Specified emotes need to be space separated.
-node index.js --id <RMRK_ID> -e wss://kusama-rpc.polkadot.io -s "<SEED_PHRASE>" --emotes 🚀 🎉
+node index.js --id <RMRK_ID_FILE> -e wss://kusama-rpc.polkadot.io -s <SEED_FILE> --emotes 🚀 🎉
 
 # Removing specific emotes from complete list of emotes
 # Specified emotes need to be space separated.
-node index.js --id <RMRK_ID> -e wss://kusama-rpc.polkadot.io -s "<SEED_PHRASE>" -r 🤩 🥳
+node index.js --id <RMRK_ID_FILE> -e wss://kusama-rpc.polkadot.io -s <SEED_FILE> -r 🤩 🥳
 ```
 
 ℹ️ Please note that the [`emojis` list in index.js](index.js) contains many emoji unicodes. So if you want to emote with less emojis then just remove some from the list before running it. It is also possible to specify a specific list of emojis by using the command: `--emotes` and providing a space sperated list of emotjis.

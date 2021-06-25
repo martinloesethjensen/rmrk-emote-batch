@@ -1,8 +1,11 @@
 # Sending specific emotee
-node index.js --id <RMRK_ID> -e wss://kusama-rpc.polkadot.io -s "<SEED_PHRASE>" --emotes
+node index.js --id <RMRK_ID_FILE> -e wss://kusama-rpc.polkadot.io -s <SEED_FILE> --emotes
+node index.js --id rmrk_ids.txt -e wss://westend-rpc.polkadot.io -s keys.txt --emotes 🐣
 
 # Removing specific emotes from complete list of emotes
-node index.js --id <RMRK_ID> -e wss://kusama-rpc.polkadot.io -s "<SEED_PHRASE>" -r 
+node index.js --id <RMRK_ID_FILE> -e wss://kusama-rpc.polkadot.io -s <SEED_FILE> -r
+node index.js --id rmrk_ids.txt -e wss://westend-rpc.polkadot.io -s keys.txt -r 🐣
 
 # Sending all emotes
-node index.js --id <RMRK_ID> -e wss://kusama-rpc.polkadot.io -s "<SEED_PHRASE>"
+node index.js --id <RMRK_ID_FILE> -e wss://kusama-rpc.polkadot.io -s <SEED_FILE>
+node index.js --id rmrk_ids.txt -e wss://westend-rpc.polkadot.io -s keys.txt
