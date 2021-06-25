@@ -36,7 +36,7 @@ npm install
 
 Specify rpc endpoint, egg id and seed phrase in the command.
 
-I would first test on Westend before trying it out on kusama. But try in small batches of emotes as you might not have enough westies.   
+I would first test on Westend before trying it out on kusama. But try in small batches of emotes as you might not have enough westies.
 
 [Westend faucet info here.](https://wiki.polkadot.network/docs/en/maintain-networks#westend-faucet)
 
