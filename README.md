@@ -68,14 +68,16 @@ node index.js -e wss://kusama-rpc.polkadot.io --receiving-addresses <FILE_WITH_A
 
 ```txt
 Options:
-      --help      Show help                                            [boolean]
-      --version   Show version number                                  [boolean]
+      --amount    Amount of KSM to be divided amongst the list of accounts
+                                                             [number] [required]
       --id        The id of your target egg                  [string] [required]
+      --emotes    array of emojis, space separated                       [array]
   -e, --endpoint  The wss endpoint. [Westend = wss://westend-rpc.polkadot.io]
                   [Kusama = wss://kusama-rpc.polkadot.io]    [string] [required]
-  -s, --seed      Your mnemonic seed. It is not saved anywhere.
-                                                             [string] [required]
-      --emotes    array of emojis, space separated                       [array]
+      --help      Show help                                            [boolean]
   -r, --remove    array of emojis to remove from the list, space separated
                                                                          [array]
+  -s, --seed      Your mnemonic seed. It is not saved anywhere.
+                                                             [string] [required]                                                                         
+      --version   Show version number                                  [boolean]
 ```
