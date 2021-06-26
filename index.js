@@ -49,6 +49,13 @@ const options = require('yargs')
     description: 'array of emojis to remove from the list, space separated',
     required: false,
   })
+  .option('chunk', {
+    alias: 'c',
+    type: 'boolean',
+    description: 'Boolean for if script should run chunked batch calls',
+    required: false,
+    default: false,
+  })
   .argv
 
 async function main() {
@@ -75,6 +82,7 @@ async function main() {
   const amount = options.amount;
   const emotes = options.emotes;
   const removeEmotes = options.remove;
+  const chunk = options.chunk;
 
   if (typeof fundingAccount !== 'undefined' && 
       typeof receivingAddresses !== 'undefined' && 
@@ -89,11 +97,11 @@ async function main() {
 
     const avg_amount = (amount * ksmPrecision) / receivingAddresses.length;
 
-    console.log('💰 AVG_AMOUNT: ', avg_amount);
+    console.log('💰 AVG_AMOUNT: ', avg_amount / ksmPrecision);
 
     for (receiver of receivingAddresses) {
       fundings.push(api.tx.balances.transfer(receiver, avg_amount));
-      console.log(`💸 Should send ${avg_amount} to ${receiver}`);
+      console.log(`💸 Should send ${avg_amount / ksmPrecision} to ${receiver}`);
     }
 
     const tx = api.tx.utility.batch(fundings);
@@ -158,28 +166,28 @@ async function main() {
 
       });
 
-      let rmrksChunked = chunkArray(rmrks, 100);
+      if (chunk) {
+        let rmrksChunked = chunkArray(rmrks, 100);
+        
+        console.log(`Total rmrks: ${rmrks.length}`);
+        console.log(`Total rmrk chunks: ${rmrksChunked.length}`);
 
-      console.log(`Total rmrks: ${rmrks.length}`);
-      console.log(`Total rmrk chunks: ${rmrksChunked.length}`);
+        for (chunk of rmrksChunked) {
+          console.log(`Chunk size: ${chunk.length}`);
 
-      for (chunk of rmrksChunked) {
-        console.log(`Chunk size: ${chunk.length}`);
+          const tx = api.tx.utility.batch(chunk);
+          await sendAndFinalize(tx, account);
+        }
+      } else {
+        const tx = api.tx.utility.batch(rmrks);
 
-        const tx = api.tx.utility.batch(chunk);
-        await sendAndFinalize(tx, account);
+        // Sign and send the transaction using account
+        const hash = await tx.signAndSend(account);
+
+        console.log('Transaction sent with hash', hash.toHex());
       }
-
     }
-    
-    //const tx = api.tx.utility.batch(rmrks);
-
-    // Sign and send the transaction using account
-    //const hash = await tx.signAndSend(account);
-
-    //console.log('Transaction sent with hash', hash.toHex());
   }
-  
 }
 
 function chunkArray(array, size) {
