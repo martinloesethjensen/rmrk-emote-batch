@@ -127,7 +127,9 @@ async function main() {
         if (typeof emotes !== 'undefined') {
           let emojisMapped = emotes.map((e) => e.toString());
           emojisMapped.forEach((emoji) => {
-            let utf8 = emoji.codePointAt(0)?.toString(16);
+            let utf8 = Array.from(emoji)
+              .map((v) => v.codePointAt(0).toString(16))
+              .join('-');
             if (utf8) {
               console.log(`[emoji]: ${emoji} / ${utf8}`)
               rmrks.push(api.tx.system.remark(`RMRK::EMOTE::1.0.0::${id}::${utf8}`));
@@ -144,7 +146,9 @@ async function main() {
             let emojisMapped = removeEmotes.map((e) => e.toString());
             let temp = [];
             emojisMapped.forEach((emoji) => {
-              let utf8 = emoji.codePointAt(0)?.toString(16);
+              let utf8 = Array.from(emoji)
+                .map((v) => v.codePointAt(0).toString(16))
+                .join('-');
               if (utf8) {
                 console.log(`[emoji to remove from list]: ${emoji} / ${utf8}`)
                 temp.push(utf8);
@@ -228,7 +232,9 @@ async function sendAndFinalize(tx, account) {
   })
 }
 
-const emojis = [
+const emojis = ['1f3f3-fe0f-200d-1f308'];
+
+const _emojis = [
   '1f600',
   '1f603',
   '1f604',
