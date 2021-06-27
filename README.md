@@ -68,16 +68,26 @@ node index.js -e wss://kusama-rpc.polkadot.io --receiving-addresses <FILE_WITH_A
 
 ```txt
 Options:
-      --amount    Amount of KSM to be divided amongst the list of accounts
-                                                             [number] [required]
-      --id        The id of your target egg                  [string] [required]
-      --emotes    array of emojis, space separated                       [array]
-  -e, --endpoint  The wss endpoint. [Westend = wss://westend-rpc.polkadot.io]
-                  [Kusama = wss://kusama-rpc.polkadot.io]    [string] [required]
-      --help      Show help                                            [boolean]
-  -r, --remove    array of emojis to remove from the list, space separated
-                                                                         [array]
-  -s, --seed      Your mnemonic seed. It is not saved anywhere.
-                                                             [string] [required]                                                                         
-      --version   Show version number                                  [boolean]
+      --help                       Show help                           [boolean]
+      --version                    Show version number                 [boolean]
+      --id                         A file with RMRK IDs.                [string]
+  -e, --endpoint                   The wss endpoint. (defaults to westend)
+                                   [Westend = wss://westend-rpc.polkadot.io]
+                                   [Kusama = wss://kusama-rpc.polkadot.io]
+                                                             [string] [required]
+  -s, --secret-keys                A file with secret keys or seed phrases. It
+                                   is not saved anywhere.               [string]
+  -f, --funding-account            A file with secret key or seed phrase. It is
+                                   not saved anywhere.                  [string]
+      --receiving-addresses, --ra  Used with funding-account where we specify
+                                   amount to transfer to receiving accounts in
+                                   the accounts file.                   [string]
+      --amount                     Used with funding-account where we specify
+                                   amount to transfer to receiving accounts in
+                                   the accounts file.
+      --emotes                     array of emojis, space separated      [array]
+  -r, --remove                     array of emojis to remove from the list,
+                                   space separated                       [array]
+  -c, --chunk                      Boolean for if script should run chunked
+                                   batch calls         [boolean] [default: true]
 ```
