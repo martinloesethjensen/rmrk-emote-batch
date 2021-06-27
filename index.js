@@ -232,9 +232,7 @@ async function sendAndFinalize(tx, account) {
   })
 }
 
-const emojis = ['1f3f3-fe0f-200d-1f308'];
-
-const _emojis = [
+const emojis = [
   '1f600',
   '1f603',
   '1f604',
