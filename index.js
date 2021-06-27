@@ -172,10 +172,10 @@ async function main() {
         console.log(`Total rmrks: ${rmrks.length}`);
         console.log(`Total rmrk chunks: ${rmrksChunked.length}`);
 
-        for (chunk of rmrksChunked) {
-          console.log(`Chunk size: ${chunk.length}`);
+        for (rmrkChunk of rmrksChunked) {
+          console.log(`Chunk size: ${rmrkChunk.length}`);
 
-          const tx = api.tx.utility.batch(chunk);
+          const tx = api.tx.utility.batch(rmrkChunk);
           await sendAndFinalize(tx, account);
         }
       } else {
