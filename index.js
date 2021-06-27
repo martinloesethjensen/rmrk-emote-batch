@@ -54,7 +54,7 @@ const options = require('yargs')
     type: 'boolean',
     description: 'Boolean for if script should run chunked batch calls',
     required: false,
-    default: false,
+    default: true,
   })
   .argv
 
