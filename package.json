@@ -6,8 +6,8 @@
   "author": "Martin L. Jensen <martinloesethjensen@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@polkadot/api": "^4.15.1",
+    "@polkadot/api": "^6.5.1",
     "@polkadot/keyring": "^6.4.1",
-    "yargs": "^17.0.1"
+    "yargs": "^17.2.1"
   }
 }

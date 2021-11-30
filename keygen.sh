@@ -2,8 +2,8 @@
 
 ## NOTES ##
 
-# This script will add 50 substrate wallet private keys in raw format to keys.txt 
- 
+# This script will add substrate wallet private keys in raw format to keys.txt 
+# and add their Kusama addresses to receiving-addresses.txt.
 
 for A in {1..50}; do subkey generate -n kusama >> /tmp/keys.txt; done
 cat /tmp/keys.txt | grep "Secret seed:"|sed 's/Secret seed://g'|tr -d ' ' >> keys.txt \

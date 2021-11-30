@@ -67,26 +67,26 @@ async function main() {
 
   const keyring = new Keyring({ type: 'sr25519', ss58Format: api.registry.chainSS58 });
 
-  const rmrkIds = (typeof options.id !== 'undefined') 
-      ? fs.readFileSync(`${options.id}`, 'UTF-8').split(/\r?\n/).filter(entry => entry.trim() != '')
-      : undefined;
-  const keys = (typeof options['secret-keys'] !== 'undefined') 
-      ? fs.readFileSync(`${options['secret-keys']}`, 'UTF-8').split(/\r?\n/).filter(entry => entry.trim() != '')
-      : undefined;
-  const fundingAccount = (typeof options['funding-account'] !== 'undefined') 
-      ? fs.readFileSync(`${options['funding-account']}`, 'UTF-8').split(/\r?\n/).filter(entry => entry.trim() != '')
-      : undefined;
-  const receivingAddresses = (typeof options['receiving-addresses'] !== 'undefined') 
-      ? fs.readFileSync(`${options['receiving-addresses']}`, 'UTF-8').split(/\r?\n/).filter(entry => entry.trim() != '')
-      : undefined;
+  const rmrkIds = (typeof options.id !== 'undefined')
+    ? fs.readFileSync(`${options.id}`, 'UTF-8').split(/\r?\n/).filter(entry => entry.trim() != '')
+    : undefined;
+  const keys = (typeof options['secret-keys'] !== 'undefined')
+    ? fs.readFileSync(`${options['secret-keys']}`, 'UTF-8').split(/\r?\n/).filter(entry => entry.trim() != '')
+    : undefined;
+  const fundingAccount = (typeof options['funding-account'] !== 'undefined')
+    ? fs.readFileSync(`${options['funding-account']}`, 'UTF-8').split(/\r?\n/).filter(entry => entry.trim() != '')
+    : undefined;
+  const receivingAddresses = (typeof options['receiving-addresses'] !== 'undefined')
+    ? fs.readFileSync(`${options['receiving-addresses']}`, 'UTF-8').split(/\r?\n/).filter(entry => entry.trim() != '')
+    : undefined;
   const amount = options.amount;
   const emotes = options.emotes;
   const removeEmotes = options.remove;
   const chunk = options.chunk;
 
-  if (typeof fundingAccount !== 'undefined' && 
-      typeof receivingAddresses !== 'undefined' && 
-      typeof amount !== 'undefined') {
+  if (typeof fundingAccount !== 'undefined' &&
+    typeof receivingAddresses !== 'undefined' &&
+    typeof amount !== 'undefined') {
     let account = keyring.addFromUri(fundingAccount[0]);
     console.log('🤖 ACCOUNT_ADDRESS: ', account.address);
 
@@ -97,9 +97,9 @@ async function main() {
 
     const avg_amount = (amount * ksmPrecision) / receivingAddresses.length;
 
-    console.log('💰 AVG_AMOUNT: ', avg_amount / ksmPrecision);
+    console.log('💰 AVG_AMOUNT:', avg_amount / ksmPrecision);
 
-    for (receiver of receivingAddresses) {
+    for (receiver of receivingAddresses) {
       fundings.push(api.tx.balances.transfer(receiver, avg_amount));
       console.log(`💸 Should send ${avg_amount / ksmPrecision} to ${receiver}`);
     }
@@ -116,7 +116,7 @@ async function main() {
 
       let account = keyring.addFromUri(key);
 
-      console.log('🤖 ACCOUNT_ADDRESS: ', account.address)
+      console.log('🤖 ACCOUNT_ADDRESS:', account.address)
 
       let rmrks = [];
 
@@ -160,7 +160,7 @@ async function main() {
           } else {
             _emojis = emojis;
           }
-          
+
           console.log(`Emojis count to be emoted: ${_emojis.length}`);
 
           _emojis.forEach((emoji) => {
@@ -171,8 +171,8 @@ async function main() {
       });
 
       if (chunk) {
-        let rmrksChunked = chunkArray(rmrks, 100);
-        
+        let rmrksChunked = chunkArray(rmrks, 300);
+
         console.log(`Total rmrks: ${rmrks.length}`);
         console.log(`Total rmrk chunks: ${rmrksChunked.length}`);
 
@@ -203,7 +203,7 @@ function chunkArray(array, size) {
   return result
 }
 
-// Lovely function from [kanaria-hatcher index.ts](https://github.com/kianenigma/kanaria-hatchery/blob/30e98bd1f39336d1c11e877cf874c452a2aa3756/src/index.ts#L167)
+// Lovely function from [kanaria-hatchery index.ts](https://github.com/kianenigma/kanaria-hatchery/blob/30e98bd1f39336d1c11e877cf874c452a2aa3756/src/index.ts#L167)
 async function sendAndFinalize(tx, account) {
   return new Promise(async resolve => {
     let success = false;
@@ -1617,18 +1617,18 @@ const emojis = [
   'a9-fe0f',
   'ae-fe0f',
   '2122-fe0f',
-  '#fe0f-20e3',
-  '*fe0f-20e3',
-  '0fe0f-20e3',
-  '1fe0f-20e3',
-  '2fe0f-20e3',
-  '3fe0f-20e3',
-  '4fe0f-20e3',
-  '5fe0f-20e3',
-  '6fe0f-20e3',
-  '7fe0f-20e3',
-  '8fe0f-20e3',
-  '9fe0f-20e3',
+  '0023-fe0f-20e3',
+  '002a-fe0f-20e3',
+  '0030-fe0f-20e3',
+  '0031-fe0f-20e3',
+  '0032-fe0f-20e3',
+  '0033-fe0f-20e3',
+  '0034-fe0f-20e3',
+  '0035-fe0f-20e3',
+  '0036-fe0f-20e3',
+  '0037-fe0f-20e3',
+  '0038-fe0f-20e3',
+  '0039-fe0f-20e3',
   '1f51f',
   '1f520',
   '1f521',
