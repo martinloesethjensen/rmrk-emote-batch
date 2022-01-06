@@ -171,7 +171,7 @@ async function main() {
       });
 
       if (chunk) {
-        let rmrksChunked = chunkArray(rmrks, 300);
+        let rmrksChunked = chunkArray(rmrks, 100);
 
         console.log(`Total rmrks: ${rmrks.length}`);
         console.log(`Total rmrk chunks: ${rmrksChunked.length}`);
