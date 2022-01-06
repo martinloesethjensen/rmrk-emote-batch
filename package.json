@@ -7,7 +7,6 @@
   "license": "MIT",
   "dependencies": {
     "@polkadot/api": "^6.5.1",
-    "@polkadot/keyring": "^6.4.1",
     "yargs": "^17.2.1"
   }
 }
